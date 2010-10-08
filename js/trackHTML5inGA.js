@@ -3,7 +3,7 @@
  * v0.1
  *
  * Track HTML Features in Google Analytics
- * http://
+ * http://go.unl.edu/trackHTML5inGA
  *
  * Copyright (c) 2010 Seth Meranda - http://seth.meranda.org/
  * Dual-licensed under the BSD and MIT licenses.
@@ -134,7 +134,7 @@ trackHTML5inGA = function() {
 (function() {
 	try { //Let's check to make sure Google Analytics is initialized
 		if (_gaq){
-			trackHTML5inGA.loadJS('js/modernizr.js', function() {
+			trackHTML5inGA.loadJS('js/modernizr.min.js', function() {
 				trackHTML5inGA.checkCookie();
 			});
 		}
