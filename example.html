@@ -7,14 +7,15 @@
 	
 		(function() {
 			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/u/ga_debug.js';
+			//ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		})();
 	</script>
 	<script type="text/javascript">
 		(function(d, t) {
 			var s=d.createElement(t),x=d.getElementsByTagName(t)[0];
-			s.async=1;s.src='js/trackHTML5inGA.js';
+			s.async=1;s.src='js/trackHTML5inGA.min.js';
 			x.parentNode.insertBefore(s,x);
 		})(document, 'script');
 	</script>

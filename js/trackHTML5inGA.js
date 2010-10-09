@@ -61,67 +61,62 @@ trackHTML5inGA = function() {
 			}
 		},
 		
-		checkCookie : function(){
+		getCookie : function(Name){
+			var search = Name + "=";
+			var returnvalue = "";
+			if (document.cookie.length > 0) {
+				offset = document.cookie.indexOf(search);
+				// if cookie exists
+				if (offset != -1) { 
+					offset += search.length;
+					// set index of beginning of value
+					end = document.cookie.indexOf(";", offset);
+					// set index of end of cookie value
+					if (end == -1) end = document.cookie.length;
+					returnvalue=unescape(document.cookie.substring(offset, end));
+				}
+			}
+			return returnvalue;
+		},
+		
+		setCookie : function(uAgent, mdVersion) {
+			document.cookie="trackHTML5inGA=yes";
+			console.log('we\'ve set the cookie, now load modernizr and begin tests');
+			trackHTML5inGA.loadJS('js/modernizr.min.js', function() {
+				trackHTML5inGA.testBrowser();
+			});
+			
+		},
+		
+		checkCookie : function() {
+			if(trackHTML5inGA.getCookie('trackHTML5inGA') != 'yes'){
+				console.log('we dont\'t have a cookie, so let\'s set it');
+				trackHTML5inGA.setCookie();
+			} else {
+				console.log('we already have the cookie, do nothing');
+				return;
+			}
+		},
+		
+		testBrowser : function(){
+			console.log('let\'s start our tests');
 			if (!window.Modernizr) {
 				console.log('Modernizr object not created.');
 				return;
 			};
-			mdVersion = Modernizr._version;
-			var userAgent = navigator.userAgent.toLowerCase();//grab the broswer User Agent
-			uAgent = userAgent.replace(/;/g, ''); //strip out the ';' so as not to bork the cookie
-			var __html5 = trackHTML5inGA.getCookie('__html5'); //trackHTML5inGA.getCookie('__html5'); //Previous UNL HTML5 test
-			if (!__html5) { //We haven't run this test before, so let's do it.
-				console.log('We have not run this test yet, let us track this client!');
-				trackHTML5inGA.setCookie(uAgent, mdVersion);
-				return;
-			}
-			//Let's check to see if either the browser or modernizr has changed since the last tracking
-			if ((uAgent +'|+|'+mdVersion) != (__html5)){
-				console.log('We don\'t have a match, let us track this client!');
-				trackHTML5inGA.setCookie(uAgent, mdVersion);
-			} else { //we have a match and nothing has changed, so do nothing more.
-				console.log('Already have this client tracked');
-				return;
-			}
-		},
-		
-		setCookie : function(uAgent, mdVersion) {
-			var value = uAgent +'|+|'+mdVersion; //combine browser User Agent and Modernizr version
-			var date = new Date();
-			date.setTime(date.getTime()+(31556926000));
-			expires = ";expires="+date.toGMTString();
-			console.log("__html5"+"="+value+" "+expires+" ;path=/");
-			document.cookie = "__html5"+"="+value+" "+expires+" ;path=/";
-			trackHTML5inGA.testBrowser();
-		},
-		
-		getCookie : function(name) {
-			var nameEQ = name + "=";
-			var ca = document.cookie.split(';');
-			for(var i=0;i < ca.length;i++) {
-				var c = ca[i];
-				while (c.charAt(0) === ' ') {
-					c = c.substring(1,c.length);
-				}
-				if (c.indexOf(nameEQ) === 0) {
-					return c.substring(nameEQ.length,c.length);
-				}
-			}
-			return null;
-		},
-		
-		testBrowser : function(){
 			for (var prop in Modernizr) {
 				if (typeof Modernizr[prop] === 'function') continue;
 				if (prop == 'inputtypes' || prop == 'input') {
 					for (var field in Modernizr[prop]) {
 						if (Modernizr[prop][field]){
+							console.log(prop + '-('+field+')');
 							_gaq.push(['_trackEvent', 'HTML5/CSS3 Support', prop + '-('+field+')', '']);
 						}
 					}
 				} else {
 					if(Modernizr[prop]){
 						if (prop != '_version' && prop != '_enableHTML5') { //Modernizr sneaks these in, so take them out of the reports
+							console.log(prop);
 							_gaq.push(['_trackEvent', 'HTML5/CSS3 Support', prop, '']);
 						}
 					}
@@ -134,9 +129,8 @@ trackHTML5inGA = function() {
 (function() {
 	try { //Let's check to make sure Google Analytics is initialized
 		if (_gaq){
-			trackHTML5inGA.loadJS('js/modernizr.min.js', function() {
-				trackHTML5inGA.checkCookie();
-			});
+			console.log('we have GA, let\'s run our tests');
+			trackHTML5inGA.checkCookie();
 		}
 	} catch(e) {}
 })();
