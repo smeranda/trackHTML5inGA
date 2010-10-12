@@ -144,7 +144,7 @@ trackHTML5inGA = function() {
 					}
 				}
 			}
-			_gaq.push(['_setCustomVar',5, 'HTML5', supportedElements.join(" "), 1]);
+			_gaq.push(['_setCustomVar',5, 'HTML5', supportedElements.join("|"), 1]);
 		}
 	};
 }();
