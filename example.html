@@ -13,9 +13,10 @@
 		})();
 	</script>
 	<script type="text/javascript">
+		featuresToTrack = ['video','audio']; // set this array with the features you want to track. **Note max character count is 55 inclusive
 		(function(d, t) {
 			var s=d.createElement(t),x=d.getElementsByTagName(t)[0];
-			s.async=1;s.src='js/trackHTML5inGA.min.js';
+			s.async=1;s.src='js/trackHTML5inGA.js';
 			x.parentNode.insertBefore(s,x);
 		})(document, 'script');
 	</script>

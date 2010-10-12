@@ -25,14 +25,28 @@ trackHTML5inGA = function() {
 	return {
 		version : '0.1',
 		
+		index : 5,
+		
 		loadedJS : {},
+		
+		featuresToTrack : featuresToTrack || false,
+		
+		initialize : function() {
+			if (trackHTML5inGA.featuresToTrack) {
+				console.log('tested true for array');
+				trackHTML5inGA.checkCookie();
+			} else {
+				console.log('we don\'t have an array');
+				return;
+			}
+		},
 		
 		loadJS : function(url,callback) {
 			if (!trackHTML5inGA.loadedJS[url]){
 				if (url in loadingJS) {
 					loadingJS[url].push(callback);
 					return;
-				}
+				};
 				loadingJS[url] = [];
 				var e = document.createElement("script");
 				e.setAttribute('src', url);
@@ -97,31 +111,40 @@ trackHTML5inGA = function() {
 				return;
 			}
 		},
-		
+		testIfInArray : function(theString) {
+			ourArray = trackHTML5inGA.featuresToTrack;
+			if (ourArray.join("").indexOf(theString) >= 0){
+				return true;
+			} else {
+				return false;
+			}
+		},
 		testBrowser : function(){
 			console.log('let\'s start our tests');
 			if (!window.Modernizr) {
 				console.log('Modernizr object not created.');
 				return;
 			};
+			var supportedElements = [];
 			for (var prop in Modernizr) {
-				if (typeof Modernizr[prop] === 'function') continue;
-				if (prop == 'inputtypes' || prop == 'input') {
-					for (var field in Modernizr[prop]) {
-						if (Modernizr[prop][field]){
-							console.log(prop + '-('+field+')');
-							_gaq.push(['_trackEvent', 'HTML5/CSS3 Support', prop + '-('+field+')', '']);
+				if (trackHTML5inGA.testIfInArray(prop)){
+					if (typeof Modernizr[prop] === 'function') continue;
+					if (prop == 'inputtypes' || prop == 'input') {
+						for (var field in Modernizr[prop]) {
+							if (Modernizr[prop][field]){
+								supportedElements.push(prop + '-('+field+')');
+							}
 						}
-					}
-				} else {
-					if(Modernizr[prop]){
-						if (prop != '_version' && prop != '_enableHTML5') { //Modernizr sneaks these in, so take them out of the reports
-							console.log(prop);
-							_gaq.push(['_trackEvent', 'HTML5/CSS3 Support', prop, '']);
+					} else {
+						if(Modernizr[prop]){
+							if (prop != '_version' && prop != '_enableHTML5') { //Modernizr sneaks these in, so take them out of the reports
+								supportedElements.push(prop);
+							}
 						}
 					}
 				}
 			}
+			_gaq.push(['_setCustomVar',5, 'HTML5', supportedElements.join(" "), 1]);
 		}
 	};
 }();
@@ -130,7 +153,9 @@ trackHTML5inGA = function() {
 	try { //Let's check to make sure Google Analytics is initialized
 		if (_gaq){
 			console.log('we have GA, let\'s run our tests');
-			trackHTML5inGA.checkCookie();
+			console.log(featuresToTrack);
+			//trackHTML5inGA.featuresToTrack = ['video','audio'];
+			trackHTML5inGA.initialize();
 		}
 	} catch(e) {}
 })();
